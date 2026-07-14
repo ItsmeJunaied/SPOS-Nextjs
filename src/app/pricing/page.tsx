@@ -123,14 +123,14 @@ export default function PricingPage() {
                 </ul>
 
                 <Link
-                  href={`/request-demo`}
+                  href={`/checkout?plan=${encodeURIComponent(p.name)}`}
                   className={`mt-7 inline-flex items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold transition ${
                     p.highlight
                       ? "bg-[var(--background)] text-[var(--foreground)] hover:opacity-90"
                       : "border border-[var(--foreground)] text-[var(--foreground)] hover:bg-[var(--foreground)] hover:text-[var(--background)]"
                   }`}
                 >
-                  Start 14-day free trial <ArrowRight className="size-4" />
+                  Choose {p.name} <ArrowRight className="size-4" />
                 </Link>
               </div>
             );

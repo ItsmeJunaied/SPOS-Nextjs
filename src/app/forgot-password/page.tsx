@@ -4,19 +4,28 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { useState } from "react";
 import { Sparkles, Mail, Loader2, ArrowLeft, CheckCircle } from "lucide-react";
+import { auth } from "@/lib/billing-api";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
 
-  function submit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setError("");
+    try {
+      // Password reset = sign in with a one-time email code, then set a new
+      // password. Reuses the hardened OTP flow (no separate reset tokens).
+      await auth.requestOtp(email.trim());
       setSent(true);
-    }, 1200);
+    } catch {
+      setError("Could not send the code. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -35,13 +44,14 @@ export default function ForgotPasswordPage() {
               <CheckCircle className="size-12 text-emerald-500 mx-auto mb-4" />
               <h1 className="text-2xl font-bold tracking-tight">Check your inbox</h1>
               <p className="mt-2 text-sm text-[var(--muted-foreground)]">
-                We sent a password reset link to <strong>{email}</strong>. It expires in 30 minutes.
+                We sent a 6-digit sign-in code to <strong>{email}</strong>. Use it on the login
+                page (Email code tab), then set a new password from your account.
               </p>
               <Link
-                href="/login"
+                href="/login?next=/change-password"
                 className="mt-6 inline-flex items-center gap-1.5 text-sm text-[var(--primary)] hover:underline"
               >
-                <ArrowLeft className="size-3.5" /> Back to sign in
+                <ArrowLeft className="size-3.5" /> Continue to sign in
               </Link>
             </div>
           ) : (
@@ -69,12 +79,14 @@ export default function ForgotPasswordPage() {
                   </div>
                 </div>
 
+                {error && <div className="rounded-xl bg-rose-500/10 text-rose-600 px-4 py-3 text-sm">{error}</div>}
+
                 <button
                   type="submit"
                   disabled={loading}
                   className="w-full rounded-full bg-[var(--foreground)] text-[var(--background)] py-3 text-sm font-semibold hover:opacity-90 disabled:opacity-60 transition flex items-center justify-center gap-2"
                 >
-                  {loading ? <><Loader2 className="size-4 animate-spin" /> Sending…</> : "Send reset link"}
+                  {loading ? <><Loader2 className="size-4 animate-spin" /> Sending…</> : "Email me a sign-in code"}
                 </button>
               </form>
 
