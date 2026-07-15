@@ -7,7 +7,7 @@
  */
 
 export const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000/api";
+  process.env.NEXT_PUBLIC_API_URL ?? "https://saloonpos-backend.onrender.com/api";
 
 export const DASHBOARD_URL =
   process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "http://localhost:5173";
