@@ -130,6 +130,24 @@ export const auth = {
     return request("/auth/password/change", { method: "POST", body: JSON.stringify(body) });
   },
 
+  async register(name: string, email: string, password: string): Promise<AuthResponse> {
+    const res = await request<AuthResponse>("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    });
+    setToken(res.accessToken);
+    return res;
+  },
+
+  async googleSignIn(idToken: string): Promise<AuthResponse> {
+    const res = await request<AuthResponse>("/auth/oauth/google", {
+      method: "POST",
+      body: JSON.stringify({ idToken }),
+    });
+    setToken(res.accessToken);
+    return res;
+  },
+
   me(): Promise<{ user: AuthUser & { mustChangePassword: boolean }; companyId: string | null }> {
     return request("/auth/me");
   },
